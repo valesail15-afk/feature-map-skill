@@ -1,0 +1,15 @@
+# 格式示例（不参与查询）
+#
+# 两条最小示例，用于演示字段写法，也可作为新项目地图的起点：
+#   copy examples\demo.yaml <项目根目录>\feature-map.yaml
+
+features:
+  - name: 商品价格
+    aliases: [价格, 售价, 商品售价, 改价, 定价]
+    where: 侧边栏 > 商品 > 价格
+    how: 点开商品 > 编辑
+
+  - name: 商品编辑
+    aliases: [编辑商品, 修改商品, 商品信息, 商品资料]
+    where: 侧边栏 > 商品 > 编辑
+    how: 点开商品 > 编辑
