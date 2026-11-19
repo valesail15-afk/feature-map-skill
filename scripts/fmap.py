@@ -31,6 +31,7 @@ DATA_NAME = "feature-map.yaml"
 SITES_DIR = Path(__file__).resolve().parent.parent / "sites"
 ENV_VAR = "FEATURE_MAP_FILE"
 SEPARATORS = re.compile(r"[\s,，、/]+")
+EXACT_BONUS = 50
 
 
 def find_data_file(explicit=None, site=None):
@@ -67,7 +68,9 @@ def load_features(data_file):
 
 
 def norm(text):
-    return "".join(str(text).lower().split())
+    """归一化：去空白，并把连字符/间隔符去掉，便于「记一笔完成」命中「记一笔-完成」。"""
+    cleaned = re.sub(r"[-–—‐_·•]", "", str(text).lower())
+    return "".join(cleaned.split())
 
 
 def score_token(feature, token):
@@ -90,7 +93,7 @@ def score_token(feature, token):
 
 
 def score(feature, query):
-    """多关键词：每个词都必须命中，得分累加。"""
+    """多关键词：每个词都必须命中，得分累加；整词完全命中额外加权。"""
     tokens = [t for t in SEPARATORS.split(query) if t]
     if not tokens:
         return 0
@@ -99,7 +102,7 @@ def score(feature, query):
         s = score_token(feature, token)
         if s == 0:
             return 0
-        total += s
+        total += s + (EXACT_BONUS if s == 100 else 0)
     return total
 
 
@@ -129,6 +132,11 @@ def main():
         sys.exit(2)
 
     features = load_features(data_file)
+
+    if not features:
+        print(f"功能地图为空：{data_file}", file=sys.stderr)
+        print("请先添加功能条目，格式见 skill 的 README.md。", file=sys.stderr)
+        sys.exit(2)
 
     if args.list:
         if not features:

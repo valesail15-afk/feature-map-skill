@@ -20,6 +20,7 @@ python <skill目录>\scripts\fmap.py 设为壁纸
 | `examples/wallpaper-app.yaml` | 参考示例：壁纸推荐精选 App 的 27 条真实地图 |
 | `examples/demo.yaml` | 最小格式示例（2 条） |
 | `sites/hy.ithinkai.cn/feature-map.yaml` | 网站示例：红鸦 AI（登录后实跑取证的 75 条地图） |
+| `sites/canvas.vbing.site/feature-map.yaml` | 网站示例：连镜（登录后实跑取证的 73 条地图） |
 | `README.md` | 本文件，接入与维护说明 |
 
 技能包内**不含任何项目数据**；`examples/` 只是参考，不会被自动加载。
@@ -63,7 +64,9 @@ python <skill目录>\scripts\fmap.py 功能名
 python <skill目录>\scripts\fmap.py 充值 --site hy.ithinkai.cn
 ```
 
-完整示例见 `sites/hy.ithinkai.cn/feature-map.yaml`（红鸦 AI，75 条：6 个主导航页及全部二级页、三级弹窗/子功能、案例详情与一键同款、产品档案、知识库、词库批量操作、4 个工具、套餐/充值记录、积分/申诉/流水、邀请/海报/规则、分销子页、开发者接入与插件安装、教程专题页、协议页）。
+完整示例见 `sites/hy.ithinkai.cn/feature-map.yaml`（红鸦 AI，75 条：6 个主导航页及全部二级页、三级弹窗/子功能、案例详情与一键同款、产品档案、知识库、词库批量操作、4 个工具、套餐/充值记录、积分/申诉/流水、邀请/海报/规则、分销子页、开发者接入与插件安装、教程专题页、协议页）；`sites/canvas.vbing.site/feature-map.yaml`（连镜，73 条：左侧导航、创作页三种生成模式与参数、资产筛选、短剧/营销工作室、我的作品、画布编辑器节点与菜单、个人中心与积分商城）。
+
+注意：登录页的表单可能是隐藏副本（`inert`），直接用选择器填写会超时；先点页面右上角「登录」激活登录面板再填。直接访问子路由也可能被 nginx 403，要从页面内导航点击进入。
 
 未纳入取证的部分：实际支付流程、真实生成作品后的结果/编辑页（会扣积分或产生订单）；会员「规则」的跳转目标；词库导入/导出/批量删除与插件安装的实际执行结果。
 
