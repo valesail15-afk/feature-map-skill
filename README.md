@@ -104,6 +104,10 @@ features:
     how: 点「我的」> 齿轮 > 点「语言」
 ```
 
+4. 条目多了以后跑一次自检：`python <skill目录>\scripts\fmap.py --check`，它会报告重复名称/别名、缺字段和「按名称查不到自己」的条目。
+
+`--site` 既接受域名，也接受完整地址：`--site https://hy.ithinkai.cn/` 会自动归一化成 `hy.ithinkai.cn`。
+
 ## 修改与删除
 
 - 改名：改 `name`，旧名称保留在 `aliases` 里，避免老说法查不到。
@@ -118,6 +122,7 @@ features:
 | `python ...fmap.py 我的 收藏` | 多关键词，需全部命中 |
 | `python ...fmap.py 会员 --all` | 所有匹配项，带功能名 |
 | `python ...fmap.py --list` | 列出全部功能及位置 |
+| `python ...fmap.py --check` | 校验地图：必填字段、名称/别名唯一、名称可自查询命中 |
 
 匹配规则：名称/别名完全匹配优先，其次前缀、包含；多关键词各自打分累加；名称和别名都没命中时，再在 `where`/`how` 文本里兜底检索。
 

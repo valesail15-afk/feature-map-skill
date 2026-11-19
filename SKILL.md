@@ -18,7 +18,7 @@ description: 跨项目查询「某个功能在界面的哪里、怎么点开」�
 
 因此每个项目各自维护一份地图：把 `feature-map.yaml` 放在项目根目录即可。
 
-网站类产品没有代码仓库时，地图放在技能目录 `sites/<域名>/feature-map.yaml`，查询时用 `--site <域名>`（当前内置：`hy.ithinkai.cn`，75 条）。用户问的是某个已内置网站的功能、而当前项目没有地图时，直接用 `--site` 回答。
+网站类产品没有代码仓库时，地图放在技能目录 `sites/<域名>/feature-map.yaml`，查询时用 `--site <域名>`（当前内置：`hy.ithinkai.cn` 75 条、`canvas.vbing.site` 73 条）。用户问的是某个已内置网站的功能、而当前项目没有地图时，直接用 `--site` 回答；`--site` 也接受完整 URL。
 
 ## 查询方式
 
@@ -41,7 +41,8 @@ python <skill目录>\scripts\fmap.py 设为壁纸
 | --- | --- |
 | 用多个关键词缩小范围 | `python <skill目录>\scripts\fmap.py 我的 收藏` |
 | 查看所有可能匹配项 | `python <skill目录>\scripts\fmap.py 会员 --all` |
-| 浏览全部已录入功能 | `python <skill目录>\scripts\fmap.py --list` |
+| 浏览器全部已录入功能 | `python <skill目录>\scripts\fmap.py --list` |
+| 校验地图（重复名/别名、缺字段、自查询） | `python <skill目录>\scripts\fmap.py --check` |
 | 指定其他地图文件 | `python <skill目录>\scripts\fmap.py 价格 --data docs/feature-map.yaml` |
 | 查询内置站点地图 | `python <skill目录>\scripts\fmap.py 充值 --site hy.ithinkai.cn` |
 

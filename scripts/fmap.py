@@ -73,6 +73,13 @@ def norm(text):
     return "".join(cleaned.split())
 
 
+def normalize_site(site):
+    """允许传域名、完整 URL 或带路径的地址，统一成 sites/<域名> 可用的形式。"""
+    value = site.strip()
+    value = re.sub(r"^https?://", "", value, flags=re.I)
+    return value.split("/")[0].lower()
+
+
 def score_token(feature, token):
     """单个关键词打分：名称/别名完全匹配 > 前缀 > 包含，最后兜底查路径。"""
     query = norm(token)
@@ -115,16 +122,41 @@ def render(feature, with_name=False):
     return "\n".join(lines)
 
 
+def validate(features):
+    """维护期校验：字段完整、名称/别名全图唯一、每个名称都能自查询命中自己。"""
+    errors = []
+    owners = {}
+    for i, f in enumerate(features, 1):
+        missing = [k for k in ("name", "where", "how") if not f.get(k)]
+        if missing:
+            errors.append(f"第 {i} 条缺少字段：{', '.join(missing)}")
+        for label in [f.get("name"), *f.get("aliases", [])]:
+            if label:
+                owners.setdefault(label, []).append(f.get("name") or f"第{i}条")
+    for label, names in owners.items():
+        if len(names) > 1:
+            errors.append(f"名称/别名重复：{label} -> {', '.join(names)}")
+    for f in features:
+        name = f.get("name")
+        if not name:
+            continue
+        best = max(features, key=lambda x: score(x, name))
+        if score(best, name) == 0 or best["name"] != name:
+            errors.append(f"自查询未命中：{name} -> {best.get('name')}")
+    return errors
+
+
 def main():
     parser = argparse.ArgumentParser(description="按功能名或关键词查询功能地图")
     parser.add_argument("query", nargs="*", help="功能名或关键词，多个词用空格分隔")
     parser.add_argument("--data", help="feature-map.yaml 路径，默认从当前目录向上查找")
-    parser.add_argument("--site", help="技能内置站点地图，例如 hy.ithinkai.cn（对应 sites/<域名>/feature-map.yaml）")
+    parser.add_argument("--site", help="技能内置站点地图，例如 hy.ithinkai.cn（也接受完整 URL）")
     parser.add_argument("--all", action="store_true", help="列出所有匹配项")
     parser.add_argument("--list", action="store_true", help="列出全部功能")
+    parser.add_argument("--check", action="store_true", help="校验地图：必填字段、名称/别名唯一、名称可自查询命中")
     args = parser.parse_args()
 
-    data_file = find_data_file(args.data, args.site)
+    data_file = find_data_file(args.data, normalize_site(args.site) if args.site else None)
     if data_file is None:
         print(f"未找到 {DATA_NAME}。", file=sys.stderr)
         print("请在项目根目录创建该文件，或用 --data 指定路径。", file=sys.stderr)
@@ -137,6 +169,16 @@ def main():
         print(f"功能地图为空：{data_file}", file=sys.stderr)
         print("请先添加功能条目，格式见 skill 的 README.md。", file=sys.stderr)
         sys.exit(2)
+
+    if args.check:
+        errors = validate(features)
+        if errors:
+            print(f"地图校验未通过：{data_file}")
+            for e in errors:
+                print(" -", e)
+            sys.exit(1)
+        print(f"地图校验通过：{data_file}（{len(features)} 条）")
+        return
 
     if args.list:
         if not features:
